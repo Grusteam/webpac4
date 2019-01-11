@@ -16,6 +16,10 @@ module.exports = (env, argv) => {
 	/* console.log('env, argv', env, argv); */
 	
 	const config = {
+		/* entry: {
+			'js/index.js': './src/index.js', //js
+			'css/main.css': './src/styles/styles.css' //styles
+		}, */
 		/* отправная точка */
 		entry: './src/index.js',
 		/* build */
@@ -104,25 +108,26 @@ module.exports = (env, argv) => {
 		]
 	};
 
-	const
-		/* сжатие кода css */
-		minimizerCss = new OptimizeCSSAssetsPlugin({}),
-		/* сжатие кода js */
-		minimizerJs = new UglifyJsPlugin({
-			cache: true,
-			parallel: true,
-			uglifyOptions: {
-			compress: false,
-			ecma: 6,
-			mangle: true
-			},
-			sourceMap: true
-		});
+	/* сжатие кода css */
+	if (__MY_SETUP.minimizeCss) {
+		config.optimization.minimizer.push(new OptimizeCSSAssetsPlugin({}));
+	};
 
-		/* сжатие кода css */
-		if (__MY_SETUP.minimizeCss) config.optimization.minimizer.push(minimizerCss);
-		/* сжатие кода js */
-		if (__MY_SETUP.minimizeJs) config.optimization.minimizer.push(minimizerJs);
+	/* сжатие кода js */
+	if (__MY_SETUP.minimizeJs) {
+		config.optimization.minimizer.push(
+			new UglifyJsPlugin({
+				cache: true,
+				parallel: true,
+				uglifyOptions: {
+				compress: false,
+				ecma: 6,
+				mangle: true
+				},
+				sourceMap: true
+			})
+		);
+	};
 
 	return config;
 };
