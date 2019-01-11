@@ -1,5 +1,5 @@
-import "./styles/main.css";
-import "./styles/test.css";
+import "./styles/styles.css";
+// import "./styles/test.css";
 
 console.log(1);
 
