@@ -1,19 +1,30 @@
-const path = require('path');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const
+	__MY_SETUP = {
+		minimizeHtml: true,
+		minimizeJs: true,
+		minimizeCss: true,
+	},
+	path = require('path'),
+	HtmlWebPackPlugin = require("html-webpack-plugin"),
+	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+	OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"),
+	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 /* console.log('path', path); */
 /* console.log('__dirname', __dirname); */
 
 module.exports = (env, argv) => {
 	/* console.log('env, argv', env, argv); */
 	
-	return {
+	const config = {
 		/* отправная точка */
 		entry: './src/index.js',
 		/* build */
 		output: {
 			filename: '[name].js',
 			path: __dirname + '/build'
+		},
+		optimization: {
+			minimizer: []
 		},
 		module: {
 			rules: [
@@ -31,7 +42,10 @@ module.exports = (env, argv) => {
 					use: [
 						{
 							loader: "html-loader",
-							options: { minimize: true }
+							options: {
+								/* сжатие кода html */
+								minimize: __MY_SETUP.minimizeHtml
+							}
 						}
 					]
 				},
@@ -88,5 +102,27 @@ module.exports = (env, argv) => {
 				chunkFilename: "[id].css"
 			})
 		]
-	}
+	};
+
+	const
+		/* сжатие кода css */
+		minimizerCss = new OptimizeCSSAssetsPlugin({}),
+		/* сжатие кода js */
+		minimizerJs = new UglifyJsPlugin({
+			cache: true,
+			parallel: true,
+			uglifyOptions: {
+			compress: false,
+			ecma: 6,
+			mangle: true
+			},
+			sourceMap: true
+		});
+
+		/* сжатие кода css */
+		if (__MY_SETUP.minimizeCss) config.optimization.minimizer.push(minimizerCss);
+		/* сжатие кода js */
+		if (__MY_SETUP.minimizeJs) config.optimization.minimizer.push(minimizerJs);
+
+	return config;
 };
