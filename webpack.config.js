@@ -76,7 +76,7 @@ module.exports = (env, argv) => {
 							loader: 'file-loader',
 							options: {
 								/* путь */
-								name: 'public/images/[name].[ext]',
+								name: './public/images/[name].[ext]',
 							},
 						},
 					]

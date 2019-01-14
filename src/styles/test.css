@@ -1,5 +1,5 @@
-#app {
-    width: 500px;
-    height: 500px;
+#bgi {
+    width: 96px;
+    height: 96px;
     background-image: url('../public/images/dog.png');
 }
