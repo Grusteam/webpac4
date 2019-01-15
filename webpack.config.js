@@ -1,14 +1,17 @@
 const
 	__MY_SETUP = {
-		minimizeHtml: true,
-		minimizeJs: true,
-		minimizeCss: true,
+		minimizeHtml: !true,
+		minimizeJs: !true,
+		minimizeCss: !true,
 	},
 	path = require('path'),
+	webpack = require('webpack'),
 	HtmlWebPackPlugin = require("html-webpack-plugin"),
 	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
 	OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"),
+	HtmlWebpackPlugin = require('html-webpack-plugin'),
 	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 /* console.log('path', path); */
 /* console.log('__dirname', __dirname); */
 
@@ -32,12 +35,17 @@ module.exports = (env, argv) => {
 		},
 		module: {
 			rules: [
+				/* templating */
+				{ test: /\.handlebars$/, loader: "handlebars-loader" },
 				/* JS */
 				{
 					test: /\.js$/,
 					exclude: /node_modules/,
 					use: {
-						loader: "babel-loader"
+						loader: "babel-loader",
+						options: {
+							presets: ['@babel/preset-env']
+						}
 					}
 				},
 				/* html */
@@ -55,17 +63,35 @@ module.exports = (env, argv) => {
 				},
 				/* css */
 				{
-					test: /\.css$/,
+					test: /\.(sa|sc|pc|c)ss$/,
 					use: [
 						{
 							loader: MiniCssExtractPlugin.loader,
 							options: {
-								// you can specify a publicPath here
-								// by default it use publicPath in webpackOptions.output
 								publicPath: './'
 							}
 						},
-						"css-loader"
+						{
+							loader: 'css-loader'
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								parser: "postcss-scss"
+							}
+						},
+						/* {
+							loader: 'css-loader',
+							options: {
+								modules: !true,
+								sourceMap: !true,
+								importLoaders: 1
+							}
+						}, */
+						// 'sass-loader',
+						// 'less-loader',
+						// 'style-loader',
+						// 'stylus-loader'
 					]
 				},
 				/* проброс картинок */
@@ -76,7 +102,7 @@ module.exports = (env, argv) => {
 							loader: 'file-loader',
 							options: {
 								/* путь */
-								name: './public/images/[name].[ext]',
+								name: 'public/images/[name].[ext]',
 							},
 						},
 					]
@@ -104,6 +130,15 @@ module.exports = (env, argv) => {
 			new MiniCssExtractPlugin({
 				filename: "[name].css",
 				chunkFilename: "[id].css"
+			}),
+			new webpack.LoaderOptionsPlugin({
+				options: {
+					handlebarsLoader: {}
+				}
+			}), 
+			new HtmlWebpackPlugin({
+				title: 'My awesome service',
+				template: './src/index.handlebars'
 			})
 		]
 	};
