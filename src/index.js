@@ -6,6 +6,16 @@ import "./styles/styles.css";
 import _join from 'lodash/join';
 // import _forEach from 'lodash/forEach';
 
+/* ramda> */
+import * as _R from 'ramda';
+import identity from 'ramda/src/identity';
+
+// console.log('_R', _R);
+
+const xs = [{a: 1}, {a: 2}, {a: 3}];
+// console.log(_R.find(_R.propEq('a', 2))(xs)); //=> {a: 2}
+/* ramda */
+
 function component() {
 	const element = document.createElement('div');
 
